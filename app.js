@@ -1,10 +1,3 @@
-// 1. npm init -y
-// 2. npm i express
-// 3. npm i ejs
-// 4. npm i Mongoose
-// 5. touch app.js
-///// 6. npm i ejs-mate -> helpful for creating layouts(boilerPlate)
-
 if(process.env.NODE_ENV != "production") {
     require("dotenv").config();
 }
@@ -83,15 +76,14 @@ const sessionOptions = {
 
 
 app.use(session(sessionOptions));
-app.use(flash());//routes se pehle use karna hai flash ko
+app.use(flash());
 
-//passport ko implement karenge session MW ke just baad
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
-passport.serializeUser(User.serializeUser());//login ke baaf
-passport.deserializeUser(User.deserializeUser());//logout ke baad
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
 
@@ -104,62 +96,11 @@ app.use((req,res,next) => {
     next();
 });
 
-
-/*
-app.get("/demoUser", async ( req,res) => {
-    let fakeUser = new User({
-        email : "student@gmail.com",
-        username : "deltaStudent",//passport ne khud automatically username add kia
-    })
-
-    //register(user,password,cb) -> static method, khud se sab kuch karega like username unique hai ki nhi
-    let registeredUser = await User.register(fakeUser, "helloworld");
-    res.send(registeredUser);
-});
-//mongoose uses "pbkdf2" hashing algorithm
-*/
-
-
-
-
 app.use("/listings", listingRouter);//routes
 
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/" ,userRouter);
 
-
-
-//reviews
-//post review route
-
-
-//Mongo $pull Operator
-//removes from an existing array all instances of a value or values that match a specified condition
-
-//delete review route
-
-
-
-
-
-
-
-
-
-
-// app.get("/testListing",async (req,res) => {
-//     let sampleTesting = new Listing({
-//         title : "My new Villa",
-//         description : "by the Beach",
-//         price : 1200,
-//         location : "Calangute,Goa",
-//         country : "India"
-//     });
-
-//     await sampleTesting.save();
-//     console.log("sample was saved");
-//     res.send("Successful testing");
-// });
 
 app.all("*", (req,res,next) => {
     next(new ExpressError(404, "Page Not Found!"));
@@ -167,14 +108,9 @@ app.all("*", (req,res,next) => {
 
 app.use((err,req,res,next) => {
     let {statusCode=500, message="Something went wrong!!"} = err;
-    //res.status(statusCode).send(message);
     res.status(statusCode).render("error.ejs", { message });
-    //res.send("Something Went Wrong");
 });
 
 app.listen(8080, () => {
     console.log("server is listening to port 8080");
 });
-
-
-//Validation For Schema --> use JOI (npm i joi)
